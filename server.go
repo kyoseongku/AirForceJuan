@@ -1,10 +1,8 @@
-package main
+package server
 
 import (
   "log"
   "net/http"
-
-  "AirForceJuan/handlers"
 )
 
 var (
@@ -23,10 +21,31 @@ func middlewares(fn func(http.ResponseWriter, *http.Request)) http.HandlerFunc {
 
 
 
+func phoneHandler(http.ResponseWriter, *http.Request) {
+  where := "phone"
+  log.Println(where, "hello")
+}
+
+
+
+func rpiHandler(http.ResponseWriter, *http.Request) {
+  where := "rpi"
+  log.Println(where, "hello")
+}
+
+
+
+func webHandler(http.ResponseWriter, *http.Request) {
+  where := "web"
+  log.Println(where, "hello")
+}
+
+
+
 func main() {
-  http.HandleFunc("/api/phone", middlewares(handlers.Phone))
-  http.HandleFunc("/api/rpi", middlewares(handlers.Rpi))
-  http.HandleFunc("/api/web", middlewares(handlers.Web))
+  http.HandleFunc("phone", middlewares(phoneHandler))
+  http.HandleFunc("rpi", middlewares(rpiHandler))
+  http.HandleFunc("web", middlewares(webHandler))
 
   log.Println("Launching server", port)
   err := http.ListenAndServe(port, nil)
