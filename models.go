@@ -12,6 +12,5 @@ type PiControl struct {
 }
 
 type Propeller struct {
-  Which string
   Freq  float64
 }

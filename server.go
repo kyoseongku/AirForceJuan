@@ -1,6 +1,7 @@
 package main
 
 import (
+  "encoding/json"
   "io/ioutil"
   "log"
   "net/http"
@@ -9,24 +10,31 @@ import (
 
 
 func HandlePi(res http.ResponseWriter, req *http.Request) {
+  where := "pi"
+
   if req.Method != "POST" {
     http.NotFound(res, req)
     return
   }
 
-  where := "pi"
-  log.Println(where, "Received data")
-
   reqBody, err := ioutil.ReadAll(req.Body)
   if err != nil {
     log.Fatalln(err)
   }
+  if err := json.Unmarshal(reqBody, &piData); err != nil {
+    log.Fatalln(where, err)
+  }
 
-  log.Println(string(reqBody))
+  log.Printf("%s Received data %+v\n", where, piData)
+
+  Compute()
+
+  data, err := json.Marshal(piControl)
+  if err != nil {
+    log.Fatalln(err)
+  }
 
   res.Header().Set("Content-Type", "application/json")
-
-  data := []byte("pi handler\n")
   res.Write(data)
 }
 

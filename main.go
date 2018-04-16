@@ -11,9 +11,11 @@ var (
   Port = ":3210"
   Server = "localhost"
   Pi = "192.168.158.221"
-  T_Timeout = 3 // Seconds
-  T_Pi = 1000   // Milliseconds
-  N_Props = 4   // Number of propellers
+  piData PiData       // Pi's current state
+  piControl PiControl // Suggested new state for Pi
+  T_Timeout = 3       // Seconds
+  T_Pi = 1000         // Milliseconds
+  N_Props = 4         // Number of propellers
 )
 
 

@@ -7,10 +7,9 @@ import (
   "log"
   "math/rand"
   "net/http"
+  "strings"
   "time"
 )
-
-var piData PiData
 
 
 
@@ -38,10 +37,10 @@ func NewPi() {
     Props: make([]Propeller, N_Props),
   }
 
-  piData.Props[0] = Propeller{ Freq: 0.0, Which: "Front-Left" }
-  piData.Props[1] = Propeller{ Freq: 0.0, Which: "Front-Right" }
-  piData.Props[2] = Propeller{ Freq: 0.0, Which: "Rear-Right" }
-  piData.Props[3] = Propeller{ Freq: 0.0, Which: "Rear-Left" }
+  piData.Props[0] = Propeller{ Freq: 0.0 }
+  piData.Props[1] = Propeller{ Freq: 0.0 }
+  piData.Props[2] = Propeller{ Freq: 0.0 }
+  piData.Props[3] = Propeller{ Freq: 0.0 }
 }
 
 
@@ -70,7 +69,19 @@ func DoThePi(c chan bool) {
   request.Header.Set("Content-Type", "application/json")
   response, err := client.Do(request)
   if err != nil {
-    log.Fatalln(err)
+    errSplit := strings.Split(err.Error(), " ")
+
+    if len(errSplit) == 8 && errSplit[6]+errSplit[7] == "connectionrefused" {
+      log.Println("Can't reach server: connection refused")
+      c <-true
+      return
+    } else if len(errSplit) == 10 && errSplit[3]+errSplit[4] == "requestcanceled" {
+      log.Println("Can't reach server: connection timed out")
+      c <-true
+      return
+    }
+
+    log.Fatalln(where, err)
   }
   defer response.Body.Close()
 
