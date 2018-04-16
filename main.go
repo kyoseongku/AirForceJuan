@@ -9,8 +9,11 @@ import (
 
 var (
   Port = ":3210"
-  Host = "192.168.158.221"
-  T_Pi = 1000
+  Server = "localhost"
+  Pi = "192.168.158.221"
+  T_Timeout = 3 // Seconds
+  T_Pi = 1000   // Milliseconds
+  N_Props = 4   // Number of propellers
 )
 
 
@@ -27,13 +30,17 @@ func middlewares(fn func(http.ResponseWriter, *http.Request)) http.HandlerFunc {
 
 func main() {
   if len(os.Args) < 2 || (os.Args[1] != "server" && os.Args[1] != "pi") {
-    log.Fatalln("Run: \"./AirForceJuan server|pi\"\n")
+    log.Fatalln("Run: \"./AutoDrone server|pi\"\n")
   }
   mode := os.Args[1]
 
   if mode == "pi" {
+    NewPi()
+
     t := time.NewTimer(time.Duration(T_Pi)*time.Millisecond)
     c := make(chan bool)
+
+    log.Printf("Launching %s @ %s%s\n", mode, Pi, Port)
     for {
       select {
       case <-t.C:
@@ -43,13 +50,13 @@ func main() {
       }
     }
   } else {
-    http.HandleFunc("/phone", middlewares(HandlePhone))
-    http.HandleFunc("/pi", middlewares(HandlePi))
-    http.HandleFunc("/web", middlewares(HandleWeb))
+    NewCompute()
 
-    log.Printf("Launching %s%s\n", mode, Port)
+    http.HandleFunc("/pi", middlewares(HandlePi))
+    http.HandleFunc("/ui", middlewares(HandleUI))
+
+    log.Printf("Launching %s @ %s%s\n", mode, Server, Port)
     err := http.ListenAndServe(Port, nil)
     log.Fatalln(err)
   }
 }
-
