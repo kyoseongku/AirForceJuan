@@ -6,22 +6,22 @@ import (
 
 
 func NewCompute() {
-  piControl = PiControl{
-    Props: make([]Propeller, N_Props),
-  }
+    piControl = PiControl {
+        PropellerArray: make( []Propeller, N_Propellers ),
+    }
 
-  piControl.Props[0] = Propeller{ Freq: 0.0 }
-  piControl.Props[1] = Propeller{ Freq: 0.0 }
-  piControl.Props[2] = Propeller{ Freq: 0.0 }
-  piControl.Props[3] = Propeller{ Freq: 0.0 }
+    piControl.PropellerArray[0] = Propeller{ Frequency: 0.0 }
+    piControl.PropellerArray[1] = Propeller{ Frequency: 0.0 }
+    piControl.PropellerArray[2] = Propeller{ Frequency: 0.0 }
+    piControl.PropellerArray[3] = Propeller{ Frequency: 0.0 }
 }
 
 
 
 func Compute() {
-  // TODO actually compute based on current propeller states, altitude, and location
-  piControl.Props[0].Freq = -1.0*piData.Props[0].Freq
-  piControl.Props[1].Freq = -1.0*piData.Props[1].Freq
-  piControl.Props[2].Freq = -1.0*piData.Props[2].Freq
-  piControl.Props[3].Freq = -1.0*piData.Props[3].Freq
+    // TODO actually compute based on current propeller states, altitude, and location
+    piControl.PropellerArray[0].Frequency = -1.0*piData.PropellerArray[0].Frequency
+    piControl.PropellerArray[1].Frequency = -1.0*piData.PropellerArray[1].Frequency
+    piControl.PropellerArray[2].Frequency = -1.0*piData.PropellerArray[2].Frequency
+    piControl.PropellerArray[3].Frequency = -1.0*piData.PropellerArray[3].Frequency
 }

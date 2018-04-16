@@ -1,16 +1,16 @@
 package main
 
 type PiData struct {
-  Props []Propeller
-  Alt   float64
-  Lat   float64
-  Lng   float64
+    PropellerArray[] Propeller
+    Altitude  float64
+    Latitude  float64
+    Longitude float64
 }
 
 type PiControl struct {
-  Props []Propeller
+    PropellerArray[] Propeller
 }
 
 type Propeller struct {
-  Freq  float64
+    Frequency float64
 }
