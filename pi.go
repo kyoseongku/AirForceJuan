@@ -81,7 +81,7 @@ func DoThePi(c chan bool) {
       return
     }
 
-    log.Fatalln(where, err)
+    log.Fatalln(err)
   }
   defer response.Body.Close()
 
