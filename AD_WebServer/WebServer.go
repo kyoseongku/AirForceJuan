@@ -1,7 +1,7 @@
 package webserver
 
 import (
-	PI "AutoDrone/AD_PiServer"
+	"AutoDrone/AD_AutoDrone"
 	SC "AutoDrone/AD_ServerConstants"
 	"log"
 	"net/http"
@@ -9,8 +9,8 @@ import (
 
 // StartWebServer ...
 func StartWebServer() {
-	PiControl = NewCompute()
-	PiData = PI.NewPi()
+	AutoDroneControl = autodrone.NewCompute()
+	AutoDrone = autodrone.NewData()
 	http.HandleFunc("/pi", middlewares(HandlePi))
 	http.HandleFunc("/ui", middlewares(HandleUI))
 

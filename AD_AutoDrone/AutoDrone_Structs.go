@@ -1,15 +1,15 @@
-package piserver
+package autodrone
 
-// PiDataType ...
-type PiDataType struct {
+// DataType ...
+type DataType struct {
 	PropellerArray []PropellerType
 	Altitude       float64
 	Latitude       float64
 	Longitude      float64
 }
 
-// PiControlType ...
-type PiControlType struct {
+// ControlType ...
+type ControlType struct {
 	PropellerArray []PropellerType
 }
 

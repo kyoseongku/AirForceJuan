@@ -1,28 +1,28 @@
 package piserver
 
 import (
+	"AutoDrone/AD_AutoDrone"
 	SC "AutoDrone/AD_ServerConstants"
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"log"
-	"math/rand"
 	"net/http"
 	"strings"
 	"time"
 )
 
 var (
-	// PiData Pi's current state
-	PiData PiDataType
+	// AutoDrone AutoDrone's current state
+	AutoDrone autodrone.DataType
 
-	// PiControl Suggested new state for Pi
-	PiControl PiControlType
+	// AutoDroneControl Suggested new state for Autodrone
+	AutoDroneControl autodrone.ControlType
 )
 
 // StartPiServer ...
 func StartPiServer() {
-	PiData = NewPi()
+	AutoDrone = autodrone.NewData()
 	// polling variables
 	var timer = time.NewTimer(time.Duration(SC.PiPollPeriod) * time.Millisecond)
 	var channel = make(chan bool)
@@ -46,10 +46,10 @@ func DoThePi(c chan bool) {
 	log.Printf("Sending data to %s%s from %s\n", SC.WebIPAddress, SC.WebPort, SC.PiIPAddress)
 
 	// Update readings
-	updateGPS()
-	updatePropellerArray()
+	autodrone.UpdateGPS(AutoDrone)
+	autodrone.UpdatePropellerArray(AutoDrone)
 
-	body, err := json.Marshal(PiData)
+	body, err := json.Marshal(AutoDrone)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -87,33 +87,4 @@ func DoThePi(c chan bool) {
 	log.Println(string(respBody))
 
 	c <- true
-}
-
-func updateGPS() {
-	// TODO: get actual GPS reading
-	PiData.Altitude = rand.Float64() * 10.0
-	PiData.Latitude = rand.Float64() * 10.0
-	PiData.Longitude = rand.Float64() * 10.0
-}
-
-func updatePropellerArray() {
-	// TODO: get actual propeller reading
-	PiData.PropellerArray[0].Frequency = rand.Float64() * 10.0
-	PiData.PropellerArray[1].Frequency = rand.Float64() * 10.0
-	PiData.PropellerArray[2].Frequency = rand.Float64() * 10.0
-	PiData.PropellerArray[3].Frequency = rand.Float64() * 10.0
-}
-
-// NewPi ...
-func NewPi() PiDataType {
-	var piData = PiDataType{
-		PropellerArray: make([]PropellerType, SC.PiNumPropellers),
-	}
-
-	piData.PropellerArray[0] = PropellerType{Frequency: 0.0}
-	piData.PropellerArray[1] = PropellerType{Frequency: 0.0}
-	piData.PropellerArray[2] = PropellerType{Frequency: 0.0}
-	piData.PropellerArray[3] = PropellerType{Frequency: 0.0}
-
-	return piData
 }

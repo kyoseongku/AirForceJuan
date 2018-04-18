@@ -1,12 +1,13 @@
 package main
 
 import (
-	PI "AutoDrone/AD_PiServer"
-	WEB "AutoDrone/AD_WebServer"
+	piserver "AutoDrone/AD_PiServer"
+	webserver "AutoDrone/AD_WebServer"
 	"log"
 	"os"
 )
 
+// Main i'd rather have the main function in a folder
 func main() {
 	if len(os.Args) < 2 || (os.Args[1] != "server" && os.Args[1] != "pi") {
 		log.Fatalln("Run: \"./AutoDrone server|pi\"")
@@ -16,8 +17,8 @@ func main() {
 	// if the server is the raspberry pi, then perform these actions.
 	// else perform these actions on the EC2.
 	if mode == "pi" {
-		PI.StartPiServer()
+		piserver.StartPiServer()
 	} else {
-		WEB.StartWebServer()
+		webserver.StartWebServer()
 	}
 }
