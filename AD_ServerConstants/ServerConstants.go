@@ -9,10 +9,10 @@ var (
 	PiPollPeriod = 1000
 
 	// PiIPAddress the ipv4 address of the Raspberry Pi
-	PiIPAddress = "192.168.158.221"
+	PiIPAddress = "169.254.56.46"
 
 	// PiPort the port of the pi server
-	PiPort = ":3210"
+	PiPort = ":1337"
 )
 
 // Web Server Constants
@@ -21,8 +21,8 @@ var (
 	WebTimeout = 3
 
 	// WebIPAddress the IPv4 address of the web server
-	WebIPAddress = "localhost"
+	WebIPAddress = "169.254.159.115"
 
 	// WebPort the port number of the web server
-	WebPort = ":3210"
+	WebPort = ":1337"
 )

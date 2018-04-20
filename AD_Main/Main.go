@@ -18,7 +18,7 @@ func main() {
 	// else perform these actions on the EC2.
 	if mode == "pi" {
 		piserver.StartPiServer()
-	} else {
+	} else if mode == "server" {
 		webserver.StartWebServer()
 	}
 }
