@@ -11,5 +11,5 @@ then
     go build -o AutoDrone.exe ./AD_Main;
     echo "Done.";
 else
-    echo "Usage: [ pi (Raspberry Pi) | w10 (Windows 10) ]";
+    echo "Usage: ./build.sh [ pi (Raspberry Pi) | w10 (Windows 10) ]";
 fi
