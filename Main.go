@@ -1,12 +1,14 @@
 package main
 
 import (
-	"AutoDrone/_Model"
+	"AutoDrone/model"
 	"log"
 	"os"
 )
 
 // AutoDrone and AutoDroneControl global variables are used differently between PiServer and WebServer.
+// Webserver uses these global variables as a temporary state storage for calculation purposes.
+// PiServer uses these global variables as state machine.
 var (
 	// AutoDrone AutoDrone's current state
 	AutoDrone autodrone.DataType

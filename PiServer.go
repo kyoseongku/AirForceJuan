@@ -1,7 +1,7 @@
 package main
 
 import (
-	"AutoDrone/_Model"
+	"AutoDrone/model"
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
