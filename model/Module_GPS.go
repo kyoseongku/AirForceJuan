@@ -14,33 +14,33 @@ var (
 
 // GPS_StartModule run through a go routine from the main function.
 func GPS_StartModule() {
-	// set up the configuration structure
-	var config = serial.OpenOptions {
-		PortName:        GPSSerialPort,
-		BaudRate:        GPSBaudRate,
+    // set up the configuration structure
+    var config = serial.OpenOptions {
+        PortName:        GPSSerialPort,
+        BaudRate:        GPSBaudRate,
         DataBits:        GPSDataBits,
         StopBits:        GPSStopBits,
         MinimumReadSize: GPSMinBufferRead }
 
-	// open the serial port for reading
-	stream, err := serial.Open( config )
-	if err != nil {
-		log.Fatal( err )
-	}
+    // open the serial port for reading
+    stream, err := serial.Open( config )
+    if err != nil {
+        log.Fatal( err )
+    }
     defer stream.Close()
 
-	// allocate buffer space
-	buf := make([]byte, GPSBufferSize )
+    // allocate buffer space
+    buf := make([]byte, GPSBufferSize )
 
     // cumulative string storage
     var cumulativeString = ""
 
-	// while the autodrone is active, read from pin
-	for {
-		numBytes, err := stream.Read( buf )
-		if err != nil {
-	         log.Fatal( err )
-		}
+    // while the autodrone is active, read from pin
+    for {
+        numBytes, err := stream.Read( buf )
+        if err != nil {
+             log.Fatal( err )
+        }
         var strBuf = string( buf[:numBytes] )
 
         // search for the start token in the current string buffer
@@ -54,7 +54,7 @@ func GPS_StartModule() {
             ParseStr( cumulativeString )
             cumulativeString = strBuf[ tokenIndex : len(strBuf) ]
         }
-	}
+    }
 }
 
 func ParseStr( str string ) {

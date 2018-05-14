@@ -2,20 +2,20 @@ package autodrone
 
 // DataType ...
 type DataType struct {
-	PropellerArray []PropellerType
-	Altitude       float64
-	Latitude       float64
-	Longitude      float64
+    PropellerArray []PropellerType
+    Altitude       float64
+    Latitude       float64
+    Longitude      float64
 }
 
 // ControlType ...
 type ControlType struct {
-	PropellerArray []PropellerType
+    PropellerArray []PropellerType
 }
 
 // PropellerType ...
 type PropellerType struct {
-	Frequency float64
+    Frequency float64
 }
 
 //
