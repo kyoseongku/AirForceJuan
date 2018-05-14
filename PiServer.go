@@ -15,14 +15,14 @@ import (
 func StartPiServer() {
 	AutoDrone = autodrone.NewData()
 
-	// polling variables
-	//var timer = time.NewTimer(time.Duration(PiPollPeriod) * time.Millisecond)
-	//var channel = make(chan bool)
-
 	go autodrone.GPS_StartModule()
-	for {
-	}
-	/*
+
+	// polling variables
+	var timer = time.NewTimer(time.Duration(PiPollPeriod) * time.Millisecond)
+	var channel = make(chan bool)
+
+	log.Printf("Launching pi @ %s%s\n", PiIPAddress, PiPort)
+
 	for {
 		select {
 		case <-timer.C:
@@ -30,7 +30,7 @@ func StartPiServer() {
 		case <-channel:
 			timer = time.NewTimer(time.Duration(PiPollPeriod) * time.Millisecond)
 		}
-	}*/
+	}
 }
 
 // DoThePi ...
@@ -38,8 +38,9 @@ func DoThePi(c chan bool) {
 	log.Printf("Sending data to %s%s from %s\n", WebIPAddress, WebPort, PiIPAddress)
 
 	// Update readings
-	autodrone.UpdateGPS(AutoDrone)
-	autodrone.UpdatePropellerArray(AutoDrone)
+	autodrone.UpdateGPS( &AutoDrone )
+	autodrone.UpdatePropellerArray( &AutoDrone )
+    log.Printf( "\n A: %f\n Lat: %f\n Lng: %f\n\n", AutoDrone.Altitude, AutoDrone.Latitude, AutoDrone.Longitude )
 
 	body, err := json.Marshal(AutoDrone)
 	if err != nil {
@@ -59,7 +60,6 @@ func DoThePi(c chan bool) {
 	response, err := client.Do(request)
 	if err != nil {
 		errSplit := strings.Split(err.Error(), " ")
-
 		if len(errSplit) == 8 && errSplit[6]+errSplit[7] == "connectionrefused" {
 			log.Println("Can't reach server: connection refused")
 			c <- true
@@ -69,7 +69,6 @@ func DoThePi(c chan bool) {
 			c <- true
 			return
 		}
-
 		log.Fatalln(err)
 	}
 	defer response.Body.Close()
@@ -79,5 +78,4 @@ func DoThePi(c chan bool) {
 	log.Println(string(respBody))
 
 	c <- true
-
 }
