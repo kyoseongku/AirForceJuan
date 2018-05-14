@@ -17,3 +17,10 @@ type ControlType struct {
 type PropellerType struct {
 	Frequency float64
 }
+
+//
+type GPSValueType struct {
+    Altitude  float64
+    Latitude  float64
+    Longitude float64
+}

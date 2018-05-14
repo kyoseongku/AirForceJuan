@@ -14,12 +14,15 @@ import (
 // StartPiServer ...
 func StartPiServer() {
 	AutoDrone = autodrone.NewData()
+
 	// polling variables
-	var timer = time.NewTimer(time.Duration(PiPollPeriod) * time.Millisecond)
-	var channel = make(chan bool)
+	//var timer = time.NewTimer(time.Duration(PiPollPeriod) * time.Millisecond)
+	//var channel = make(chan bool)
 
-	log.Printf("Launching pi @ %s%s\n", PiIPAddress, PiPort)
-
+	go autodrone.GPS_StartModule()
+	for {
+	}
+	/*
 	for {
 		select {
 		case <-timer.C:
@@ -27,7 +30,7 @@ func StartPiServer() {
 		case <-channel:
 			timer = time.NewTimer(time.Duration(PiPollPeriod) * time.Millisecond)
 		}
-	}
+	}*/
 }
 
 // DoThePi ...
@@ -76,4 +79,5 @@ func DoThePi(c chan bool) {
 	log.Println(string(respBody))
 
 	c <- true
+
 }
