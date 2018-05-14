@@ -51,8 +51,9 @@ func UpdatePropellerArray(autoDrone DataType) {
 
 // UpdateGPS ...
 func UpdateGPS(autoDrone DataType) {
-    // TODO: get actual GPS reading
-    autoDrone.Altitude = rand.Float64() * 10.0
-    autoDrone.Latitude = rand.Float64() * 10.0
-    autoDrone.Longitude = rand.Float64() * 10.0
+    var currReading GPSReading
+    GetGPSReading( &currReading )
+    autoDrone.Altitude  = currReading.Altitude
+    autoDrone.Latitude  = currReading.Latitude
+    autoDrone.Longitude = currReading.Longitude
 }

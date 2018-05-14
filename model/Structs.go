@@ -19,9 +19,12 @@ type PropellerType struct {
 }
 
 //
-type GPSValueType struct {
+type GPSReading struct {
     Altitude  float64
     Latitude  float64
     Longitude float64
+    Timestamp string
+    LatDirection byte
+    LngDirection byte
 }
 
