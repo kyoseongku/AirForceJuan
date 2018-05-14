@@ -21,8 +21,8 @@ func main() {
 	if len(os.Args) < 2 || (os.Args[1] != "server" && os.Args[1] != "pi") {
 		log.Fatalln("Run: \"./AutoDrone server|pi\"")
 	}
-	var mode = os.Args[1]
 
+	var mode = os.Args[1]
 	// directed to the piserver package and the webserver package
 	if mode == "pi" {
 		StartPiServer()

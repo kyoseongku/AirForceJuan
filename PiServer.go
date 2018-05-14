@@ -14,11 +14,12 @@ import (
 // StartPiServer ...
 func StartPiServer() {
 	AutoDrone = autodrone.NewData()
-	// polling variables
-	var timer = time.NewTimer(time.Duration(PiPollPeriod) * time.Millisecond)
-	var channel = make(chan bool)
 
-	log.Printf("Launching pi @ %s%s\n", PiIPAddress, PiPort)
+	// polling variables
+	//var timer = time.NewTimer(time.Duration(PiPollPeriod) * time.Millisecond)
+	//var channel = make(chan bool)
+
+	go autodrone.GPS_StartModule()
 
 	for {
 		select {
@@ -76,4 +77,5 @@ func DoThePi(c chan bool) {
 	log.Println(string(respBody))
 
 	c <- true
+
 }
