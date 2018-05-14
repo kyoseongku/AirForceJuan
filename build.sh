@@ -2,7 +2,7 @@
 
 if [[ $1 == "pi" ]]
 then
-    echo "Building for Rasbian";
+    echo "Building for Raspbian";
     env GOOS=linux GOARCH=arm GOARM=5 go build -o AutoDrone;
     echo "Done.";
 elif [[ $1 == "w10" ]]
@@ -12,4 +12,6 @@ then
     echo "Done.";
 else
     echo "Usage: ./build.sh [ pi (Raspberry Pi) | w10 (Windows 10) ]";
+
 fi
+

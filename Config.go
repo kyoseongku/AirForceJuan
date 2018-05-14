@@ -26,4 +26,3 @@ var (
 	// WebPort the port number of the web server
 	WebPort = ":1337"
 )
-
