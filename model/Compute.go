@@ -1,6 +1,8 @@
 package autodrone
 
-import "math/rand"
+import (
+    "math/rand"
+)
 
 // NewData ...
 func NewData() DataType {
@@ -22,7 +24,6 @@ func NewCompute() ControlType {
     var controlType = ControlType{
         PropellerArray: make([]PropellerType, NumPropellers),
     }
-
     controlType.PropellerArray[0] = PropellerType{Frequency: 0.0}
     controlType.PropellerArray[1] = PropellerType{Frequency: 0.0}
     controlType.PropellerArray[2] = PropellerType{Frequency: 0.0}
@@ -41,19 +42,19 @@ func ComputeControl(autoDrone DataType, control *ControlType) {
 }
 
 // UpdatePropellerArray ...
-func UpdatePropellerArray(autoDrone DataType) {
+func UpdatePropellerArray(autoDrone *DataType) {
     // TODO: get actual propeller reading
-    autoDrone.PropellerArray[0].Frequency = rand.Float64() * 10.0
-    autoDrone.PropellerArray[1].Frequency = rand.Float64() * 10.0
-    autoDrone.PropellerArray[2].Frequency = rand.Float64() * 10.0
-    autoDrone.PropellerArray[3].Frequency = rand.Float64() * 10.0
+    (*autoDrone).PropellerArray[0].Frequency = rand.Float64() * 10.0
+    (*autoDrone).PropellerArray[1].Frequency = rand.Float64() * 10.0
+    (*autoDrone).PropellerArray[2].Frequency = rand.Float64() * 10.0
+    (*autoDrone).PropellerArray[3].Frequency = rand.Float64() * 10.0
 }
 
 // UpdateGPS ...
-func UpdateGPS(autoDrone DataType) {
+func UpdateGPS(autoDrone *DataType) {
     var currReading GPSReading
     GetGPSReading( &currReading )
-    autoDrone.Altitude  = currReading.Altitude
-    autoDrone.Latitude  = currReading.Latitude
-    autoDrone.Longitude = currReading.Longitude
+    (*autoDrone).Altitude  = currReading.Altitude
+    (*autoDrone).Latitude  = currReading.Latitude
+    (*autoDrone).Longitude = currReading.Longitude
 }

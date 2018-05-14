@@ -24,5 +24,5 @@ var (
     WebIPAddress = "169.254.159.115"
 
     // WebPort the port number of the web server
-    WebPort = ":1337"
+    WebPort = ":9001"
 )

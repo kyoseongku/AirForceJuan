@@ -12,6 +12,5 @@ then
     echo "Done.";
 else
     echo "Usage: ./build.sh [ pi (Raspberry Pi) | w10 (Windows 10) ]";
-
 fi
 
