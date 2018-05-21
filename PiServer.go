@@ -1,6 +1,7 @@
 package main
 
 import (
+    "github.com/stianeikeland/go-rpio"
 	"AutoDrone/model"
 	"bytes"
 	"encoding/json"
@@ -15,15 +16,22 @@ import (
 func StartPiServer() {
 	AutoDrone = autodrone.NewData()
 
-	go autodrone.GPS_StartModule()
+    // initialize the GPIO drivers in rpio
+    err := rpio.Open()
+    if err != nil { log.Fatalln( err ) }
+    defer rpio.Close()
 
-	// polling variables
+    // Start modules
+	go autodrone.GPS_StartModule()
+    go autodrone.PS_StartModule()
+
+    // polling variables
 	var timer = time.NewTimer(time.Duration(PiPollPeriod) * time.Millisecond)
 	var channel = make(chan bool)
 
 	log.Printf("Launching pi @ %s%s\n", PiIPAddress, PiPort)
 
-	for {
+    for {
 		select {
 		case <-timer.C:
 			go DoThePi(channel)
@@ -32,6 +40,7 @@ func StartPiServer() {
 		}
 	}
 }
+
 
 // DoThePi ...
 func DoThePi(c chan bool) {
