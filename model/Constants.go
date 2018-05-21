@@ -23,3 +23,20 @@ var (
     GPSMinBufferRead uint = 64
 )
 
+// Proximity Sensors Constants
+var (
+    // PSSpeedOfSound this variable is in centimeters per second
+    PSSpeedOfSound float64 = 34300.0
+
+    // PSPollDelay this variable determines the amount of milliseconds
+    // before the next poll can be done per sensor.
+    PSPollDelay int = 200
+
+    PSensorIDs []PSensor = []PSensor {
+        PSensor {
+            SensorName: "PS_Front",
+            EchoPin:    21,
+            TriggerPin: 20,
+        },
+    }
+)

@@ -1,6 +1,9 @@
 package main
 
 import (
+    // "github.com/kidoman/embd"
+    // _ "github.com/kidoman/embd/host/all"
+    "github.com/stianeikeland/go-rpio"
 	"AutoDrone/model"
 	"bytes"
 	"encoding/json"
@@ -15,13 +18,27 @@ import (
 func StartPiServer() {
 	AutoDrone = autodrone.NewData()
 
-	go autodrone.GPS_StartModule()
+    // initialize the GPIO ports
+    // err := embd.InitGPIO()
+    // if( err != nil ) { log.Fatalln( err ) }
+    // defer embd.CloseGPIO()
 
-	// polling variables
+    err := rpio.Open()
+    if err != nil { log.Fatalln( err ) }
+    defer rpio.Close()
+
+    // Start modules
+	go autodrone.GPS_StartModule()
+    go autodrone.PS_StartModule()
+
+    // polling variables
 	var timer = time.NewTimer(time.Duration(PiPollPeriod) * time.Millisecond)
 	var channel = make(chan bool)
 
 	log.Printf("Launching pi @ %s%s\n", PiIPAddress, PiPort)
+
+    for{
+    }
 
 	for {
 		select {
@@ -32,6 +49,7 @@ func StartPiServer() {
 		}
 	}
 }
+
 
 // DoThePi ...
 func DoThePi(c chan bool) {
