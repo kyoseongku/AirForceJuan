@@ -12,10 +12,10 @@ then
     echo "Done.";
 elif [[ $1 == "linux" ]]
 then
-    echo "building for linunx";
+    echo "building for linux";
     env GOOS=linux GOARCH=arm GOARM=5 go build -o AutoDrone;
     echo "Done."
 else
-    echo "Usage: ./build.sh [ pi (Raspberry Pi) | w10 (Windows 10) ]";
+    echo "Usage: ./build.sh [ pi (Raspberry Pi) | w10 (Windows 10) | linux ]";
 fi
 

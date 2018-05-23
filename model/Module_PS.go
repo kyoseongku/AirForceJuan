@@ -2,7 +2,9 @@ package autodrone
 // PS Stands for Proximity Sensors
 import(
     "github.com/stianeikeland/go-rpio"
-    // "log"
+    "github.com/eapache/queue"
+    "sort"
+    //"log"
     "time"
 )
 
@@ -18,12 +20,12 @@ func PS_StartModule() {
     pSensors = make( []PSensor, len( PSensorIDs ) )
     for index := 0; index < len( PSensorIDs ); index++ {
         pSensors[ index ] = PSensorIDs[ index ]
-        var currSensor = pSensors[ index ]
-        var echoPin    = rpio.Pin( currSensor.EchoPin    )
-        var triggerPin = rpio.Pin( currSensor.TriggerPin )
+        pSensors[ index ].CurrReadings = queue.New()
+        var echoPin    = rpio.Pin( pSensors[ index ].EchoPin    )
+        var triggerPin = rpio.Pin( pSensors[ index ].TriggerPin )
         echoPin.Input()
+        echoPin.PullDown()
         triggerPin.Output()
-        triggerPin.PullDown()
     }
 
     // main module loop that updates the sensors as fast as possible
@@ -34,30 +36,32 @@ func PS_StartModule() {
     }
 }
 
-// TODO: Optimize the distance measurement by playing with poll delay 
-// and the better management of which sensor is off its cooldown period
-// possibly add a safeguard for the locking case where the rpi is not able
-// to read the echo at all.
 func measureDistance( sensor *PSensor ) {
     var echoPin    = rpio.Pin( (*sensor).EchoPin    )
     var triggerPin = rpio.Pin( (*sensor).TriggerPin )
     var input      = rpio.Low
-    var startTime  = time.Now()
+
+    var startTime       = time.Now()
+    var functionRuntime = time.Now()
 
     // Trigger a proximity measurement
     triggerPin.High()
-    time.Sleep( 10 * time.Microsecond )
+    time.Sleep( time.Duration( PSTriggerPulse ) * time.Microsecond )
     triggerPin.Low()
 
-    // Start the stopwatch // CAUTION: CAN LOCK THE MODULE
+    // Start the stopwatch, timeout in PSTimeout milliseconds
     for input == rpio.Low {
+        var elapsedTime = float64( time.Since( functionRuntime ) ) / float64( time.Millisecond )
+        if elapsedTime > PSTimeout { return }
         input = echoPin.Read()
     }
 
     startTime = time.Now()
 
-    // Stop the stopwatch // CAUTION: CAN LOCK THE MODULE
+    // Stop the stopwatch, timeout in PSTimeout milliseconds
     for input == rpio.High {
+        var elapsedTime = float64( time.Since( functionRuntime ) ) / float64( time.Millisecond )
+        if elapsedTime > PSTimeout { return }
         input = echoPin.Read()
     }
 
@@ -65,36 +69,96 @@ func measureDistance( sensor *PSensor ) {
     var deltaTime = float64( time.Since( startTime ) ) / float64( time.Second )
     var psReading = PSReading {
         Distance:  deltaTime * PSSpeedOfSound / 2,
-        Timestamp: time.Since( startTime ).String(),
+        Timestamp: startTime.String(),
     }
 
-    // Each sensor's measuring rate should be at minimum per 60 ms or greater
-    // I set this sleep to 200 for extreme caution due to locking of the
-    // module from a bad echo read.
-    time.Sleep( time.Duration( PSPollDelay ) * time.Millisecond )
+    // clip the value to min and max range
+    if psReading.Distance < PSMinRange { psReading.Distance = PSMinRange }
+    if psReading.Distance > PSMaxRange { psReading.Distance = PSMaxRange }
 
     // Update the sensor reading
-    // log.Printf( "Reading: %f",  )
     updateSensor( sensor, psReading )
+    //log.Printf( "%s: %f", (*sensor).SensorName, GetMedianProximity( (*sensor).SensorName ) )
 }
 
 func updateSensor( sensor *PSensor, update PSReading ) {
+    // Get the current readings for the sensor
+    var currReadings = (*sensor).CurrReadings
+
     (*sensor).rw_mutex.Lock()
-    (*sensor).CurrReading = update
+
+    // Add the next reading to the queue
+    (*currReadings).Add( update )
+
+    // if the queue size is larger the maximum read buffer, then remove the oldest
+    if (*currReadings).Length() > PSMaxReadBuffer { (*currReadings).Remove() }
+
     (*sensor).rw_mutex.Unlock()
 }
 
-func GetProximityReading( sensorName string, get *PSReading ) {
-    // Scan through the array of proximity sensors and find the correct one.
+// GetMedianProximity Apply a median filter to the latest samples before obtaining a distance reading ( measured in millimeters )
+func GetMedianProximity( sensorName string ) float64 {
+    var proximity = -1.0
+    var floatBuffer [ PSMaxReadBuffer ]float64
+    // Scan through the array of proximity sensors and find the correct sensor.
     for index := 0; index < len( pSensors ); index++ {
-        var currSensor = &pSensors[ index ]
-        // get the sensor reading.
-        if sensorName == currSensor.SensorName {
+        if sensorName == pSensors[ index ].SensorName {
+            var currSensor = &pSensors[ index ]
+            var currReadings = (*currSensor).CurrReadings
+
             (*currSensor).rw_mutex.RLock()
-            *get = currSensor.CurrReading
+
+            var currLength = (*currReadings).Length()
+
+            // break out if no data
+            if currLength == 0 {
+                (*currSensor).rw_mutex.RUnlock(); break
+            }
+
+            // fill the float buffer with the latest distance readings
+            for index = 0; index < currLength; index++ {
+                floatBuffer[ index ] = (*currReadings).Get( index ).(PSReading).Distance
+            }
+
+            // sort the buffer from least to greatest (probably nlogn)
+            sort.Float64s( floatBuffer[:currLength] )
+
+            // write the median reading into the return variable
+            proximity = floatBuffer[ currLength / 2 ]
+
             (*currSensor).rw_mutex.RUnlock()
-            return
+
+            break;
         }
     }
+    return proximity
 }
 
+// GetLatestProximity get the latest sensor reading ( measured in millimeters )
+func GetLatestProximity( sensorName string ) float64 {
+    var proximity = -1.0
+    // Scan through the array of proximity sensors and find the correct sensor.
+    for index := 0; index < len( pSensors ); index++ {
+        if sensorName == pSensors[ index ].SensorName {
+            var currSensor = &pSensors[ index ]
+            var currReadings = (*currSensor).CurrReadings
+
+            (*currSensor).rw_mutex.RLock()
+
+            var currLength = (*currReadings).Length()
+
+            // break out if no data
+            if currLength == 0 {
+                (*currSensor).rw_mutex.RUnlock(); break
+            }
+
+            // write the latest reading into the return variable
+            proximity = (*currReadings).Peek().(PSReading).Distance
+
+            (*currSensor).rw_mutex.RUnlock()
+
+            break;
+        }
+    }
+    return proximity
+}

@@ -1,6 +1,7 @@
 package autodrone
 
 import(
+    "github.com/eapache/queue"
     "sync"
 )
 // DataType ...
@@ -39,7 +40,7 @@ type PSReading struct {
 }
 
 type PSensor struct {
-    CurrReading PSReading
+    CurrReadings *queue.Queue
     SensorName  string
     EchoPin     uint8
     TriggerPin  uint8

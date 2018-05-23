@@ -21,6 +21,7 @@ var (
     gpsReading GPSReading
 )
 
+
 // GPS_StartModule run through a go routine from the main function.
 func GPS_StartModule() {
     // set up the configuration structure

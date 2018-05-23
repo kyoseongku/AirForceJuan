@@ -31,6 +31,10 @@ func StartPiServer() {
 
 	log.Printf("Launching pi @ %s%s\n", PiIPAddress, PiPort)
 
+    //for {
+    //    select{ }
+    //}
+
     for {
 		select {
 		case <-timer.C:
