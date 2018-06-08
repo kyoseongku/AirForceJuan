@@ -1,5 +1,5 @@
 package autodrone
-
+// GPS stands for global positionin system 
 import(
     "github.com/jacobsa/go-serial/serial"
     "strings"
@@ -11,7 +11,7 @@ import(
 
 // file-local variables
 var (
-    // gpsLogger logger fo debugging purposes
+    // gpsLogger logger for debugging purposes
     gpsLogger = log.New( os.Stderr, "", 0 )
 
     // rw_mutex ( lookup readers-writer lock ) 
@@ -20,7 +20,6 @@ var (
     // gpsReading the current reading of the GPS
     gpsReading GPSReading
 )
-
 
 // GPS_StartModule run through a go routine from the main function.
 func GPS_StartModule() {

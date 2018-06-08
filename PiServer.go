@@ -22,8 +22,9 @@ func StartPiServer() {
     defer rpio.Close()
 
     // Start modules
-	go autodrone.GPS_StartModule()
-    go autodrone.PS_StartModule()
+	//go autodrone.GPS_StartModule()
+    //go autodrone.PS_StartModule()
+    go autodrone.GA_StartModule()
 
     // polling variables
 	var timer = time.NewTimer(time.Duration(PiPollPeriod) * time.Millisecond)
@@ -31,9 +32,9 @@ func StartPiServer() {
 
 	log.Printf("Launching pi @ %s%s\n", PiIPAddress, PiPort)
 
-    //for {
-    //    select{ }
-    //}
+    for {
+        select{ }
+    }
 
     for {
 		select {

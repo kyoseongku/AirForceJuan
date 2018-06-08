@@ -120,14 +120,13 @@ func GetMedianProximity( sensorName string ) float64 {
                 floatBuffer[ index ] = (*currReadings).Get( index ).(PSReading).Distance
             }
 
+            (*currSensor).rw_mutex.RUnlock()
+
             // sort the buffer from least to greatest (probably nlogn)
             sort.Float64s( floatBuffer[:currLength] )
 
             // write the median reading into the return variable
             proximity = floatBuffer[ currLength / 2 ]
-
-            (*currSensor).rw_mutex.RUnlock()
-
             break;
         }
     }
