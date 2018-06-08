@@ -1,7 +1,7 @@
 package autodrone
 
 import (
-	"math"
+
 )
 
 const (
@@ -74,16 +74,7 @@ var (
     // GAAddress used in the I2C protocol to determine which module is using the shared bus.
     GAAddress byte = 0x68 // Found through command ( sudo i2cdetect -y 1 )
 
-    GyroSensitivity  uint16 = 131   // = 131 LSB/degrees/sec
-    AccelSensitivity uint16 = 16384 // = 16384 LSB/g
-
-	// parameters for the 6 DoF sensor fusion calculations
-	GyroMeasError float64 = math.Pi * ( 60.0 / 180.0 ) // Gyroscope measurement error in rads/s (start at 60 deg/s), then reduce after ~10 s to 3
-	GyroMeasDrift float64 = math.Pi * ( 1.0  / 180.0 ) // gyroscope measurement drift in rad/s/s (start at 0.0 deg/s/s)
-	GAbeta float64 = math.Sqrt( 3.0 / 4.0 ) * GyroMeasError // compute beta
-	GAzeta float64 = math.Sqrt( 3.0 / 4.0 ) * GyroMeasDrift // compute zeta, the other free parameter in the Madgwick scheme usually set to a small or zero value
-
-    // Sensor full scale specification.
+	// Sensor full scale specification.
     GScale int16 = GFS_250DPS
     AScale int16 = AFS_2G
 )

@@ -56,4 +56,5 @@ type GAReading struct {
     AccelX float64
     AccelY float64
     AccelZ float64
+	Temperature float64
 }
